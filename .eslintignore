@@ -1,0 +1,11 @@
+/.nuxt
+/dist
+/node_modules
+/playground/.nuxt
+/playground/.output
+/playground/dist
+/playground/node_modules
+/test/fixtures/basic/.nuxt
+/test/fixtures/basic/.output
+/test/fixtures/basic/dist
+/test/fixtures/basic/node_modules
