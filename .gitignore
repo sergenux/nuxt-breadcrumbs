@@ -1,6 +1,7 @@
 /.nuxt
 /dist
 /node_modules
+/package-lock.json
 /playground/.nuxt
 /playground/.output
 /playground/dist
