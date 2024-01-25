@@ -31,7 +31,7 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "typecheck": "npm run dev:prepare && nuxt typecheck playground",
-    "test": "vitest run",
+    "test": "npm run dev:prepare && vitest run",
     "test:watch": "vitest watch"
   },
   "dependencies": {
