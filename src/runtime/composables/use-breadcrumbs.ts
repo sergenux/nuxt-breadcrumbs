@@ -1,8 +1,19 @@
-import { computed, useRoute, useRuntimeConfig } from "#imports";
 import { type BreadcrumbsProps } from "../types/breadcrumbs-props";
 import defu from "defu";
+import {
+  computed,
+  useRoute,
+  useRuntimeConfig,
+  type ComputedRef,
+} from "#imports";
 
-export function useBreadcrumbs(props?: BreadcrumbsProps) {
+export function useBreadcrumbs(props?: BreadcrumbsProps): ComputedRef<
+  Array<{
+    label: string;
+    url: string;
+    disabled: boolean;
+  }>
+> {
   const runtimeConfig = useRuntimeConfig();
   const currentRoute = useRoute();
 
