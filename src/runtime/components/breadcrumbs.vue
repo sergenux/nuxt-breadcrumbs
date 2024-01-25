@@ -13,17 +13,35 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script lang="ts">
+import { defineComponent } from "#imports";
 import { useBreadcrumbs } from "../composables/use-breadcrumbs";
-import { type BreadcrumbsProps } from "../types/breadcrumbs-props";
 
-const props = withDefaults(defineProps<BreadcrumbsProps>(), {
-  rootLabel: undefined,
-  enableLastLink: undefined,
-  trailingSlash: undefined,
+export default defineComponent({
+  props: {
+    pageTitleKey: {
+      type: String,
+      default: undefined,
+    },
+    rootLabel: {
+      type: String,
+      default: undefined,
+    },
+    enableLastLink: {
+      type: Boolean,
+      default: undefined,
+    },
+    trailingSlash: {
+      type: Boolean,
+      default: undefined,
+    },
+  },
+  setup(props) {
+    const breadcrumbs = useBreadcrumbs(props);
+
+    return { breadcrumbs };
+  },
 });
-
-const breadcrumbs = useBreadcrumbs(props);
 </script>
 
 <style scoped>
