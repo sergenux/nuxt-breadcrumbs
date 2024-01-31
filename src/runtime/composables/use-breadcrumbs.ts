@@ -55,7 +55,7 @@ export function useBreadcrumbs(props?: BreadcrumbsProps): ComputedRef<
         }
 
         //Add/remove trailing slash for not custom url
-        if (!isCustomUrl) {
+        if (!isCustomUrl && item.data.url != "/") {
           item.data.url = config.trailingSlash
             ? item.data.url.replace(/\/?(\?|$)/, "/$1")
             : item.data.url.replace(/\/+(?=\?|$)/, "");
