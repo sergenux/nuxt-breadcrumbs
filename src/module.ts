@@ -65,7 +65,7 @@ export default defineNuxtModule<ModuleOptions>({
       filename: "./types/breadcrumbs.d.ts",
       getContents: () => `
       import { type BreadcrumbsItem } from "${resolver.resolve("./runtime/types/breadcrumbs-item.ts")}";
-      declare module "nuxt/dist/pages/runtime/composables" {
+      declare module "#app" {
         interface PageMeta {
           breadcrumbsBefore?: BreadcrumbsItem | Array<BreadcrumbsItem>;
           breadcrumbsLabel?: string | false;
