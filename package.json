@@ -1,6 +1,6 @@
 {
   "name": "@sergenux/nuxt-breadcrumbs",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Breadcrumbs for Nuxt 3 pages",
   "repository": {
     "type": "git",
