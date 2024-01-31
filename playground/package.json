@@ -7,6 +7,6 @@
     "generate": "nuxi generate"
   },
   "devDependencies": {
-    "nuxt": "^3.9.3"
+    "nuxt": "^3.10.0"
   }
 }

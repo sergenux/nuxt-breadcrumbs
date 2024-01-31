@@ -35,23 +35,23 @@
     "test:watch": "vitest watch"
   },
   "dependencies": {
-    "@nuxt/kit": "^3.9.3",
+    "@nuxt/kit": "^3.10.0",
     "defu": "^6.1.4"
   },
   "devDependencies": {
     "@nuxt/devtools": "^1.0.8",
     "@nuxt/eslint-config": "^0.2.0",
     "@nuxt/module-builder": "^0.5.5",
-    "@nuxt/schema": "^3.9.3",
-    "@nuxt/test-utils": "^3.10.0",
-    "@types/node": "^20.11.5",
+    "@nuxt/schema": "^3.10.0",
+    "@nuxt/test-utils": "^3.11.0",
+    "@types/node": "^20.11.13",
     "changelogen": "^0.5.5",
     "eslint": "^8.56.0",
     "eslint-config-prettier": "^9.1.0",
-    "nuxt": "^3.9.3",
+    "nuxt": "^3.10.0",
     "prettier": "^3.2.4",
     "typescript": "^5.3.3",
-    "vitest": "^1.2.1",
+    "vitest": "^1.2.2",
     "vue-tsc": "^1.8.27"
   }
 }
