@@ -30,6 +30,11 @@ export default defineNuxtConfig({
 });
 ```
 
+```bash
+# Prepare types
+npx nuxi prepare
+```
+
 ## Usage
 
 ### Page Meta Fields

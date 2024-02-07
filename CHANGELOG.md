@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.0.8
+
+[Compare changes v1.0.7...v1.0.8](https://github.com/sergenux/nuxt-breadcrumbs/compare/v1.0.7...v1.0.8)
+
 ## v1.0.7
 
 [Compare changes v1.0.6...v1.0.7](https://github.com/sergenux/nuxt-breadcrumbs/compare/v1.0.6...v1.0.7)
