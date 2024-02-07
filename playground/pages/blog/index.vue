@@ -8,9 +8,3 @@
     </ul>
   </main>
 </template>
-
-<script setup lang="ts">
-definePageMeta({
-  breadcrumbsLabel: false,
-});
-</script>

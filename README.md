@@ -201,7 +201,7 @@ Page structure:
 -| index.vue
 ```
 
-The chain starts with the `rootLabel`(default: 🏠) defined in the module settings so we don't need an additional item for the home page
+The chain starts with the `rootLabel`(default: 🏠) defined in the module settings so we don't need to do anything:
 
 `/index.vue`
 
@@ -209,7 +209,6 @@ The chain starts with the `rootLabel`(default: 🏠) defined in the module setti
 <script setup lang="ts">
 definePageMeta({
   pageTitle: "Home",
-  breadcrumbsLabel: false,
 });
 </script>
 ```
@@ -226,14 +225,14 @@ definePageMeta({
 </script>
 ```
 
-Nested component for blog section (we don't need an additional item for the index page as it is defined in the parent component):
+Nested component for blog section (we don't need to do anything as it is defined in the parent component):
 
 `/blog/index.vue`
 
 ```vue
 <script setup lang="ts">
 definePageMeta({
-  breadcrumbsLabel: false,
+  // ...
 });
 </script>
 ```

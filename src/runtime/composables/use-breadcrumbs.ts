@@ -43,7 +43,6 @@ export function useBreadcrumbs(params?: {
           (route.meta.breadcrumbsAfter as BreadcrumbsExtraMeta) ?? [],
         ]
           .flat()
-          .filter((item) => item.label)
           .map((item) => {
             let url = item.url;
 
@@ -57,6 +56,11 @@ export function useBreadcrumbs(params?: {
               : withoutTrailingSlash(url);
             return { ...item, url };
           });
+      })
+      .filter((item, index, array) => {
+        const prev = index - 1;
+
+        return item.label && (prev < 0 || item.url != array.at(prev)?.url);
       })
       .map((item, index, array) => {
         const { label, url, ...other } = item;

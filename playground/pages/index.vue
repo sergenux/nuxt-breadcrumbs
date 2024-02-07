@@ -10,6 +10,5 @@
 <script setup lang="ts">
 definePageMeta({
   pageTitle: "Home",
-  breadcrumbsLabel: false,
 });
 </script>
