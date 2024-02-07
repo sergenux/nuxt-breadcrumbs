@@ -1,4 +1,5 @@
-import { type BreadcrumbsProps } from "../types/breadcrumbs-props";
+import { type BreadcrumbsExtraMeta } from "../types/breadcrumbs";
+import { withTrailingSlash, withoutTrailingSlash } from "ufo";
 import defu from "defu";
 import {
   computed,
@@ -7,7 +8,12 @@ import {
   type ComputedRef,
 } from "#imports";
 
-export function useBreadcrumbs(props?: BreadcrumbsProps): ComputedRef<
+export function useBreadcrumbs(params?: {
+  pageTitleKey?: string;
+  rootLabel?: string;
+  enableLastLink?: boolean;
+  trailingSlash?: boolean;
+}): ComputedRef<
   Array<{
     label: string;
     url: string;
@@ -17,68 +23,52 @@ export function useBreadcrumbs(props?: BreadcrumbsProps): ComputedRef<
   const runtimeConfig = useRuntimeConfig();
   const currentRoute = useRoute();
 
-  const config = defu(props, runtimeConfig.public.breadcrumbsModule);
+  const config = defu(params, runtimeConfig.public.breadcrumbsModule);
 
-  return computed(() => {
+  const breadcrumbs = computed(() => {
     const matchedRoutes = currentRoute.matched.length
       ? currentRoute.matched
       : [currentRoute];
 
-    // Nav items
-    const navItems = matchedRoutes
+    return matchedRoutes
       .flatMap((matchedRoute, index, array) => {
         const isLast = index == array.length - 1;
         const route = isLast ? currentRoute : matchedRoute;
         const label =
           route.meta.breadcrumbsLabel ?? route.meta[config.pageTitleKey];
         return [
-          route.meta.breadcrumbsBefore ?? [],
-          typeof label === "string" ? { label, url: "" } : [],
-          route.meta.breadcrumbsAfter ?? [],
+          !index ? { label: config.rootLabel, url: "/" } : [],
+          (route.meta.breadcrumbsBefore as BreadcrumbsExtraMeta) ?? [],
+          typeof label === "string" ? { label, url: route.path } : [],
+          (route.meta.breadcrumbsAfter as BreadcrumbsExtraMeta) ?? [],
         ]
           .flat()
           .filter((item) => item.label)
-          .map((item) => ({
-            routePath: route.path,
-            data: { ...item },
-          }));
+          .map((item) => {
+            let url = item.url;
+
+            if (!/^(?:\w+:)?\/\/|^\//.test(url)) {
+              const baseUrl = matchedRoute.path.replace(/[^/]*$/, "");
+              url = baseUrl + url.replace(/^\.\//, "");
+            }
+
+            url = config.trailingSlash
+              ? withTrailingSlash(url)
+              : withoutTrailingSlash(url);
+            return { ...item, url };
+          });
       })
-      //Resolve URL
-      .flatMap((item) => {
-        const isCustomUrl = item.data.url ? true : false;
-        item.data.url ||= item.routePath;
-
-        // Resolve relative url
-        if (!/^(?:\w+:)?\/\/|^\//.test(item.data.url)) {
-          const baseUrl = item.routePath.replace(/[^/]*$/, "");
-          item.data.url = baseUrl + item.data.url.replace(/^\.\//, "");
-        }
-
-        //Add/remove trailing slash for not custom url
-        if (!isCustomUrl && item.data.url != "/") {
-          item.data.url = config.trailingSlash
-            ? item.data.url.replace(/\/?(\?|$)/, "/$1")
-            : item.data.url.replace(/\/+(?=\?|$)/, "");
-        }
-
-        return [item.data];
+      .map((item, index, array) => {
+        const { label, url, ...other } = item;
+        const isLast = index == array.length - 1;
+        return {
+          label,
+          url,
+          disabled: isLast ? !config.enableLastLink : false,
+          ...other,
+        };
       });
-
-    // Add root item
-    navItems.unshift({ label: config.rootLabel, url: "/" });
-
-    // Breadcrumbs
-    const breadcrumbs = navItems.map((item, index, array) => {
-      const { label, url, ...other } = item;
-      const isLast = index == array.length - 1;
-      return {
-        label,
-        url,
-        disabled: isLast ? !config.enableLastLink : false,
-        ...other,
-      };
-    });
-
-    return breadcrumbs;
   });
+
+  return breadcrumbs;
 }

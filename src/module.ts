@@ -5,6 +5,7 @@ import {
   createResolver,
   addComponentsDir,
   addImports,
+  addRouteMiddleware,
   addTypeTemplate,
 } from "@nuxt/kit";
 
@@ -61,15 +62,21 @@ export default defineNuxtModule<ModuleOptions>({
       }),
     );
 
+    addRouteMiddleware({
+      name: "breadcrumbs",
+      path: resolver.resolve("./runtime/middleware/breadcrumbs.global.ts"),
+      global: true,
+    });
+
     addTypeTemplate({
       filename: "./types/breadcrumbs.d.ts",
       getContents: () => `
-      import { type BreadcrumbsItem } from "${resolver.resolve("./runtime/types/breadcrumbs-item.ts")}";
+      import { type BreadcrumbsExtraMeta } from "${resolver.resolve("./runtime/types/breadcrumbs.ts")}";
       declare module "#app" {
         interface PageMeta {
-          breadcrumbsBefore?: BreadcrumbsItem | Array<BreadcrumbsItem>;
+          breadcrumbsBefore?: BreadcrumbsExtraMeta;
           breadcrumbsLabel?: string | false;
-          breadcrumbsAfter?: BreadcrumbsItem | Array<BreadcrumbsItem>;
+          breadcrumbsAfter?: BreadcrumbsExtraMeta;
           hideBreadcrumbs?: boolean;
         }
       }
