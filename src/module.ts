@@ -64,14 +64,14 @@ export default defineNuxtModule<ModuleOptions>({
 
     addRouteMiddleware({
       name: "breadcrumbs",
-      path: resolver.resolve("./runtime/middleware/breadcrumbs.global.ts"),
+      path: resolver.resolve("./runtime/middleware/breadcrumbs.global"),
       global: true,
     });
 
     addTypeTemplate({
       filename: "./types/breadcrumbs.d.ts",
       getContents: () => `
-      import { type BreadcrumbsExtraMeta } from "${resolver.resolve("./runtime/types/breadcrumbs.ts")}";
+      import { type BreadcrumbsExtraMeta } from "${resolver.resolve("./runtime/types/breadcrumbs")}";
       declare module "#app" {
         interface PageMeta {
           breadcrumbsBefore?: BreadcrumbsExtraMeta;
