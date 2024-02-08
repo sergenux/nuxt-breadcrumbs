@@ -1,78 +1,91 @@
-import { type BreadcrumbsExtraMeta } from "../types/breadcrumbs";
-import { withTrailingSlash, withoutTrailingSlash } from "ufo";
 import defu from "defu";
-import {
-  computed,
-  useRoute,
-  useRuntimeConfig,
-  type ComputedRef,
-} from "#imports";
+import { type BreadcrumbsExtraMeta } from "../types/breadcrumbs";
+import { withTrailingSlash, withoutTrailingSlash, joinURL } from "ufo";
+import { useRoute, useRuntimeConfig } from "#imports";
+import { computed, type ComputedRef } from "#imports";
 
-export function useBreadcrumbs(params?: {
-  pageTitleKey?: string;
-  rootLabel?: string;
-  enableLastLink?: boolean;
-  trailingSlash?: boolean;
-}): ComputedRef<
-  Array<{
-    label: string;
-    url: string;
-    disabled: boolean;
-  }>
-> {
+export function useBreadcrumbs(params?: BreadcrumbsParams): Breadcrumbs {
   const runtimeConfig = useRuntimeConfig();
-  const currentRoute = useRoute();
+  const route = useRoute();
 
   const config = defu(params, runtimeConfig.public.breadcrumbsModule);
 
   const breadcrumbs = computed(() => {
-    const matchedRoutes = currentRoute.matched.length
-      ? currentRoute.matched
-      : [currentRoute];
+    const rootLabel = { label: params?.rootLabel ?? "🏠", url: "/" };
+    const matchedRoutes = route.matched.length ? route.matched : [route];
 
-    return matchedRoutes
-      .flatMap((matchedRoute, index, array) => {
-        const isLast = index == array.length - 1;
-        const route = isLast ? currentRoute : matchedRoute;
-        const label =
-          route.meta.breadcrumbsLabel ?? route.meta[config.pageTitleKey];
-        return [
-          !index ? { label: config.rootLabel, url: "/" } : [],
-          (route.meta.breadcrumbsBefore as BreadcrumbsExtraMeta) ?? [],
-          typeof label === "string" ? { label, url: route.path } : [],
-          (route.meta.breadcrumbsAfter as BreadcrumbsExtraMeta) ?? [],
-        ]
-          .flat()
-          .map((item) => {
-            let url = item.url;
+    return (
+      matchedRoutes
+        .flatMap((matchedRoute, index, array) => {
+          const matchedRoutePath = withoutTrailingSlash(matchedRoute.path);
+          const baseUrl = matchedRoutePath.replace(/[^/]*$/, "");
 
-            if (!/^(?:\w+:)?\/\/|^\//.test(url)) {
-              const baseUrl = matchedRoute.path.replace(/[^/]*$/, "");
-              url = baseUrl + url.replace(/^\.\//, "");
-            }
+          const isLast = index == array.length - 1;
+          const routeItem = isLast ? route : matchedRoute;
 
-            url = config.trailingSlash
-              ? withTrailingSlash(url)
-              : withoutTrailingSlash(url);
-            return { ...item, url };
-          });
-      })
-      .filter((item, index, array) => {
-        const prev = index - 1;
+          const pageTitle = routeItem.meta[config.pageTitleKey];
+          const label = routeItem.meta.breadcrumbsLabel ?? pageTitle;
 
-        return item.label && (prev < 0 || item.url != array.at(prev)?.url);
-      })
-      .map((item, index, array) => {
-        const { label, url, ...other } = item;
-        const isLast = index == array.length - 1;
-        return {
-          label,
-          url,
-          disabled: isLast ? !config.enableLastLink : false,
-          ...other,
-        };
-      });
+          const breadcrumbsItem = {
+            label: typeof label === "string" ? label : "",
+            url: withoutTrailingSlash(routeItem.path),
+          };
+
+          return (
+            [
+              !index ? rootLabel : [],
+              (routeItem.meta.breadcrumbsBefore as BreadcrumbsExtraMeta) ?? [],
+              breadcrumbsItem,
+              (routeItem.meta.breadcrumbsAfter as BreadcrumbsExtraMeta) ?? [],
+            ]
+              .flat()
+              // Resolve URL
+              .map((item) => {
+                let url = item.url;
+
+                // Resolve relative URL
+                if (!/^(?:\w+:)?\/\/|^\//.test(url)) {
+                  url = joinURL(baseUrl, url);
+                }
+
+                // Trailing slash
+                url = config.trailingSlash
+                  ? withTrailingSlash(url)
+                  : withoutTrailingSlash(url);
+
+                return { ...item, url };
+              })
+          );
+        })
+        // Remove empty label and nested route duplication
+        .filter((item, index, array) => {
+          const prev = index - 1;
+          return item.label && (prev < 0 || item.url != array.at(prev)?.url);
+        })
+        // Enable/disable last link
+        .map((item, index, array) => {
+          const isLast = index == array.length - 1;
+          return { ...item, disabled: isLast && !config.enableLastLink };
+        })
+    );
   });
 
   return breadcrumbs;
+}
+
+// Types
+
+type Breadcrumbs = ComputedRef<BreadcrumbsItem[]>;
+
+interface BreadcrumbsItem {
+  label: string;
+  url: string;
+  disabled: boolean;
+}
+
+interface BreadcrumbsParams {
+  pageTitleKey?: string;
+  rootLabel?: string;
+  enableLastLink?: boolean;
+  trailingSlash?: boolean;
 }
