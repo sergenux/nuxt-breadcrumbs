@@ -2,7 +2,7 @@
 
 Breadcrumbs for Nuxt 3 pages.
 
-<span style="color: red; font-weight:bold;">DEPRECATED!</span> Use [sgx-nuxt-breadcrumbs](https://www.npmjs.com/package/sgx-nuxt-breadcrumbs) module.
+**DEPRECATED!** Use [sgx-nuxt-breadcrumbs](https://www.npmjs.com/package/sgx-nuxt-breadcrumbs) module.
 
 ## Setup
 

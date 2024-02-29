@@ -1,6 +1,6 @@
 {
   "name": "@sergenux/nuxt-breadcrumbs",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "description": "Breadcrumbs for Nuxt 3 pages",
   "license": "MIT",
   "type": "module",
